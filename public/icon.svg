@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <mask id="moon">
+      <rect width="128" height="128" fill="black"/>
+      <circle cx="95" cy="95" r="11.44" fill="white"/>
+      <circle cx="98.16" cy="87.87" r="10.08" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- The field: neutral charcoal, round. -->
+  <circle cx="57" cy="57" r="50" fill="#1C1A24"/>
+
+  <!-- Play: a transport symbol, not anybody's logo. No rounded-rectangle bug
+       around it, and a red of our own rather than YouTube's exact value. -->
+  <path d="M46 40 L46 74 L79 57 Z"
+        fill="#F2384F" stroke="#F2384F"
+        stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- Do not disturb, hung off the lower-right so it breaks the edge. -->
+  <circle cx="95" cy="95" r="25" fill="#1C1A24"/>
+  <circle cx="95" cy="95" r="22" fill="#8B7DF0"/>
+  <rect width="128" height="128" fill="#1C1A24" mask="url(#moon)"/>
+</svg>

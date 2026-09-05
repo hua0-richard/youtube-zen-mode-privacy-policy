@@ -1,0 +1,340 @@
+/* Focus Mode For YouTube — the privacy policy and what the extension does.
+ *
+ * The palette, the type and the spacing are taken from css/list.css in the
+ * extension repository. The reasoning for each value is in that file and is
+ * not repeated here. */
+
+:root {
+  --ut-bg: #fdfdfd;
+  --ut-fg: #1c1c1e;
+  --ut-mid: #5a5a5f;
+  --ut-dim: #6d6d73;
+  --ut-line: #e6e6e9;
+  --ut-fill: #f7f7f8;
+  --ut-hover: #f1f1f3;
+  --ut-raise: #ffffff;
+
+  /* Blue is "this one": focus, and a link. Red is "careful", and on a page
+     with nothing to warn about it is spent once, on the mark. */
+  --ut-accent: #0b5fbf;
+  --ut-link: #0b5fbf;
+  --ut-mark: #d7362d;
+  --ut-glow: rgba(11, 95, 191, 0.13);
+
+  /* One face, and only this one. The extension has no second typeface and no
+     monospace: a name like chrome.storage.local is told apart from the prose
+     around it by colour and a ground, the same way the extension tells a
+     label from a title. A code face here would be a font the extension does
+     not have. */
+  --ut-text: -apple-system, "SF Pro Text", system-ui, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  --ut-title: 22px;
+  --ut-read-lg: 16px;
+  --ut-read: 14px;
+  --ut-read-sm: 13px;
+  --ut-label: 12px;
+  --ut-label-sm: 11px;
+
+  --ut-track-lg: -0.014em;
+  --ut-read-track: -0.005em;
+  --ut-track: 0.007em;
+  --ut-track-wide: 0.16em;
+
+  --ut-weight-read: 400;
+  --ut-weight-label: 500;
+  --ut-weight-ui: 590;
+
+  --ut-edge: 40px;
+  --ut-gap-sm: 8px;
+  --ut-gap: 14px;
+  --ut-gap-lg: 20px;
+  --ut-measure: min(64rem, calc(100vw - 8rem));
+
+  --ut-r-sm: 5px;
+  --ut-r: 7px;
+  --ut-r-lg: 11px;
+  --ut-ctl: 26px;
+
+  --ut-quick: 90ms;
+  --ut-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  color-scheme: light dark;
+}
+
+/* The extension follows YouTube's `html[dark]`. A page of its own follows the
+   system setting, with a button to override it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ut-bg: #161717;
+    --ut-fg: #dfdfe2;
+    --ut-mid: #a9aaae;
+    --ut-dim: #8f8f95;
+    --ut-line: #333336;
+    --ut-fill: #1f2021;
+    --ut-hover: #29292c;
+    --ut-raise: #393a3c;
+    --ut-accent: #6aabff;
+    --ut-link: #6aabff;
+    --ut-mark: #ff6257;
+    --ut-glow: rgba(106, 171, 255, 0.18);
+  }
+}
+:root[data-theme="dark"] {
+  --ut-bg: #161717;
+  --ut-fg: #dfdfe2;
+  --ut-mid: #a9aaae;
+  --ut-dim: #8f8f95;
+  --ut-line: #333336;
+  --ut-fill: #1f2021;
+  --ut-hover: #29292c;
+  --ut-raise: #393a3c;
+  --ut-accent: #6aabff;
+  --ut-link: #6aabff;
+  --ut-mark: #ff6257;
+  --ut-glow: rgba(106, 171, 255, 0.18);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ut-bg);
+  color: var(--ut-fg);
+  font-family: var(--ut-text);
+  font-size: var(--ut-read);
+  font-weight: var(--ut-weight-read);
+  line-height: 1.6;
+  letter-spacing: var(--ut-read-track);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ut-accent);
+  outline-offset: 2px;
+  border-radius: var(--ut-r-sm);
+}
+
+/* ---------- the header ----------
+   Full-width only for the hairline. The bar itself is the same measure as
+   the page, so the mark and the title share a left rule. No glass, no
+   spacer: the nav sits at the other end of that measure. */
+
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--ut-bg);
+  border-bottom: 1px solid var(--ut-line);
+}
+.hdr-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ut-gap);
+  max-width: var(--ut-measure);
+  height: 52px;
+  margin: 0 auto;
+  padding: 0 var(--ut-edge);
+}
+.hdr-home {
+  display: flex;
+  align-items: center;
+  gap: var(--ut-gap-sm);
+  min-width: 0;
+  color: var(--ut-fg);
+  text-decoration: none;
+}
+.hdr-home:hover { color: var(--ut-mid); }
+.mark {
+  flex: 0 0 auto;
+  width: var(--ut-ctl);
+  height: var(--ut-ctl);
+  color: var(--ut-mark);
+}
+.hdr-name {
+  font-size: var(--ut-label);
+  font-weight: var(--ut-weight-ui);
+  letter-spacing: var(--ut-track);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hdr-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: var(--ut-ctl);
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--ut-r);
+  background: transparent;
+  color: var(--ut-dim);
+  font-family: var(--ut-text);
+  font-size: var(--ut-label);
+  font-weight: var(--ut-weight-label);
+  letter-spacing: var(--ut-track);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--ut-quick) var(--ut-ease);
+}
+.btn:hover { color: var(--ut-fg); }
+/* The page you are on. It is stated rather than left to be worked out from
+   the heading, since the three pages open the same way. */
+.btn[aria-current="page"] { color: var(--ut-fg); }
+
+/* The theme control is an icon, like every control in the extension's own
+   header. It carries the state it will move you to, not the state you are
+   in: the sun offers light and appears in the dark. */
+.btn-icon {
+  width: var(--ut-ctl);
+  padding: 0;
+  justify-content: center;
+  margin-left: 2px;
+}
+.btn-icon:hover { background: var(--ut-hover); }
+.btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+/* Which of the two shows is decided in CSS rather than by the script, so the
+   button is never briefly wrong on load and is still right with scripting
+   turned off. */
+.icon-sun { display: none; }
+:root[data-theme="dark"] .icon-moon { display: none; }
+:root[data-theme="dark"] .icon-sun { display: initial; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .icon-moon { display: none; }
+  :root:not([data-theme="light"]) .icon-sun { display: initial; }
+}
+
+/* ---------- the page ----------
+   One column. Header, title, sections and footer all start on the same
+   edge. Vertical rhythm is adjacency: a thing has no bottom margin of its
+   own, the next thing states the gap. */
+
+.wrap {
+  max-width: var(--ut-measure);
+  margin: 0 auto;
+  padding: 48px var(--ut-edge) 80px;
+}
+
+.mast h1 {
+  margin: 0;
+  font-size: var(--ut-title);
+  line-height: 1.25;
+  font-weight: var(--ut-weight-ui);
+  letter-spacing: var(--ut-track-lg);
+}
+.mast p { margin-top: 10px; }
+.lede {
+  margin: 12px 0 0;
+  font-size: var(--ut-read-lg);
+  line-height: 1.5;
+  color: var(--ut-mid);
+  letter-spacing: var(--ut-track-lg);
+}
+.stamp {
+  margin: 8px 0 0;
+  font-size: var(--ut-label);
+  color: var(--ut-dim);
+  letter-spacing: var(--ut-track);
+}
+
+.mast + p,
+.mast + .claim,
+.mast + .plain { margin-top: 28px; }
+.plain + p { margin-top: 16px; }
+
+p { margin: 0; }
+p + p { margin-top: 12px; }
+strong { font-weight: var(--ut-weight-ui); }
+
+/* Prose links carry a rule under them at a third of their weight. Scoped to
+   prose: the header's mark and its nav are links too, and a rule under each
+   of those would turn a quiet bar into a row of underlines. */
+a { color: var(--ut-link); text-decoration: none; }
+main p a,
+main li a,
+.foot a {
+  border-bottom: 1px solid color-mix(in srgb, var(--ut-link) 35%, transparent);
+  transition: border-color var(--ut-quick) var(--ut-ease);
+}
+main p a:hover,
+main li a:hover,
+.foot a:hover { border-bottom-color: var(--ut-link); }
+
+/* An API name, in the page's one face. It is told apart by colour and a
+   ground rather than by a second typeface. */
+code {
+  /* `inherit`, and it has to be stated: the browser's own stylesheet sets
+     `font-family: monospace` on this element, so leaving it alone puts a
+     second typeface on a page whose whole type argument is that there is only
+     one. */
+  font-family: inherit;
+  padding: 0.1em 0.24em;
+  border-radius: var(--ut-r-sm);
+  background: var(--ut-fill);
+  color: var(--ut-mid);
+  font-size: 0.92em;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+kbd {
+  font-family: inherit; /* same reason as `code` above */
+  display: inline-block;
+  padding: 0.1em 0.34em;
+  border: 1px solid var(--ut-line);
+  border-radius: var(--ut-r-sm);
+  background: var(--ut-fill);
+  color: var(--ut-fg);
+  font-size: 0.86em;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* ---------- the claim ----------
+   The one sentence the policy is. Larger than the body, not boxed: a fill
+   and a bar made it a card on a page that is otherwise prose. */
+.claim {
+  font-size: var(--ut-read-lg);
+  line-height: 1.45;
+  letter-spacing: var(--ut-track-lg);
+}
+
+.plain {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+.plain li + li { margin-top: 7px; }
+.plain li::marker { color: var(--ut-dim); }
+
+/* ---------- the foot of a page ---------- */
+
+.foot {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ut-line);
+  font-size: var(--ut-label);
+  color: var(--ut-dim);
+  letter-spacing: var(--ut-track);
+}
+
+@media (max-width: 720px) {
+  .hdr-bar { padding: 0 var(--ut-gap); }
+  .wrap { padding: 36px var(--ut-gap) 64px; }
+  .hdr-name { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

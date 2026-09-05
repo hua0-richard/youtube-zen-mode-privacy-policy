@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Focus Mode For YouTube</title>
+<meta name="description" content="Focus Mode For YouTube collects nothing, sends nothing, and has no server.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<script>
+  /* Applied before the first paint, so a reader who chose a theme does not
+     watch the other one flash past. It is inline because a file would be one
+     more round trip in front of the paint it exists to beat, and it is the
+     only script on the site that is not a module. */
+  try {
+    var t = localStorage.getItem("ut-theme");
+    if (t) document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+</head>
+<body>
+<div id="root"><!--app--></div>
+<script type="module" src="/src/entries/client.jsx"></script>
+</body>
+</html>

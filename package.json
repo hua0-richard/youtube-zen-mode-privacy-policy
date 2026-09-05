@@ -1,0 +1,23 @@
+{
+  "name": "focus-mode-privacy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Privacy policy site for Focus Mode For YouTube.",
+  "license": "MIT",
+  "author": "Richard Hua",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node prerender.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3"
+  }
+}
