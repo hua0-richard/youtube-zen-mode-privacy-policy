@@ -21,6 +21,15 @@ export function MoonIcon() {
   );
 }
 
+export function LockIcon() {
+  return (
+    <svg className="icon-lock" viewBox="0 0 16 16" aria-hidden="true" focusable="false" {...stroke}>
+      <rect x="3.2" y="7.1" width="9.6" height="6.6" rx="1.4" />
+      <path d="M5.2 7.1V5a2.8 2.8 0 0 1 5.6 0v2.1" />
+    </svg>
+  );
+}
+
 export function SunIcon() {
   return (
     <svg className="icon-sun" viewBox="0 0 16 16" aria-hidden="true" focusable="false" {...stroke}>

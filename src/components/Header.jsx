@@ -1,29 +1,33 @@
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Link } from "react-router-dom";
 import { Mark } from "./Mark.jsx";
 import { ThemeToggle } from "./ThemeToggle.jsx";
-import { PAGES } from "../data/nav.js";
 
+/* The bar, in the shape of Vercel's: the mark, the pages beside it, and the
+   controls at the far end. A hairline appears only once the page has moved. */
 export function Header() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="hdr">
+    <header className="hdr" data-scrolled={scrolled ? "" : undefined}>
       <div className="hdr-bar">
-        <Link className="hdr-home" to="/">
+        <Link to="/" className="hdr-home" aria-label="Focus Mode">
           <Mark />
-          <span className="hdr-name">Focus Mode</span>
         </Link>
-        <nav className="hdr-nav">
-          {PAGES.map((page) => (
-            <NavLink
-              key={page.id}
-              className="btn"
-              to={page.path}
-              end={page.path === "/"}
-            >
-              {page.nav}
-            </NavLink>
-          ))}
-          <ThemeToggle />
+        <nav className="hdr-nav" aria-label="Pages">
+          <NavLink to="/" end>
+            Home
+          </NavLink>
+          <NavLink to="/privacy">Privacy</NavLink>
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   );
