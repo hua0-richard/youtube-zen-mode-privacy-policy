@@ -157,7 +157,9 @@ export function LandingPage() {
         </div>
       </div>
 
-      {live && <div className="story-shade" style={{ opacity: 1 - heat }} aria-hidden="true" />}
+      {/* Present from the prerender on, fully dark until measured, so the
+          preview is never seen before its shadow. */}
+      <div className="story-shade" style={{ opacity: live ? 1 - heat : 1 }} aria-hidden="true" />
 
       <section ref={story} className={"story" + (live ? " is-live" : "") + (settled ? " is-settled" : "")} data-away={away ? "" : undefined} aria-label="How Focus Mode works">
         <div className="story-pin">

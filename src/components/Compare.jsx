@@ -231,7 +231,7 @@ const Youtube = memo(function Youtube() {
             <div>
               {SHORTS.map(([len, thumb]) => (
                 <span key={thumb}>
-                  <img src={thumb} alt="" loading="lazy" decoding="async" />
+                  <img src={thumb} alt="" decoding="sync" />
                   <span>{len}</span>
                 </span>
               ))}
@@ -252,7 +252,7 @@ function Card({ title, ch, meta, time, thumb, avatar }) {
   return (
     <div className="yt-card">
       <div className="yt-thumb">
-        <img src={thumb} alt="" loading="lazy" decoding="async" />
+        <img src={thumb} alt="" decoding="sync" />
         <span>{time}</span>
       </div>
       <div className="yt-info">
@@ -390,7 +390,7 @@ const Focus = memo(function Focus({ channel, shorts, pane }) {
           <div className="fm-pane" style={{ width: `${pane * 340}px`, opacity: Math.min(1, pane * 1.6) }}>
             <div className="fm-pane-in">
               <div className="fm-pane-thumb">
-                <img src={OPEN.thumb} alt="" loading="lazy" decoding="async" />
+                <img src={OPEN.thumb} alt="" decoding="sync" />
               </div>
               <p className="fm-pane-title">{OPEN.title}</p>
               <p className="fm-pane-meta">

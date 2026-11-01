@@ -47,6 +47,10 @@ for (const [route, [title, description]] of Object.entries(meta)) {
   const file = route === "/" ? resolve(OUT, "index.html") : resolve(OUT, route.slice(1), "index.html");
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, html);
+  /* Also as `privacy.html`: a host that serves `/privacy` by looking for that
+     file (most do) then finds the right page, rather than falling back to the
+     landing page, whose markup would not hydrate and would be thrown away. */
+  if (route !== "/") writeFileSync(resolve(OUT, route.slice(1) + ".html"), html);
   console.log("prerendered " + route);
 }
 

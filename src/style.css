@@ -1285,8 +1285,11 @@ code {
 .story-caps h2 span { display: block; color: var(--ut-em); font-weight: 600; }
 @media (min-width: 720px) { .story-caps h2 { white-space: nowrap; } }
 .story-caps h2 strong { color: var(--ut-heading); font-weight: 600; }
-.pol-wrap { margin: 0; text-align: center; transition: opacity 0.4s var(--ut-ease), transform 0.5s var(--ut-spring, cubic-bezier(0.32, 0.72, 0, 1)); }
-.story.is-live .pol-wrap:not(.on) { opacity: 0; transform: translateY(6px); pointer-events: none; }
+.pol-wrap { margin: 0; text-align: center; }
+.story.is-settled .pol-wrap { transition: opacity 0.4s var(--ut-ease), transform 0.5s var(--ut-spring, cubic-bezier(0.32, 0.72, 0, 1)); }
+/* Hidden from the prerender on, not only once live, so it never shows and then
+   fades out as the story comes up. Without scripting it stays visible. */
+.js .pol-wrap:not(.on), .story.is-live .pol-wrap:not(.on) { opacity: 0; transform: translateY(6px); pointer-events: none; }
 .pol {
   display: inline-flex;
   align-items: center;
@@ -1359,7 +1362,9 @@ code {
 .story.is-live:not([data-away]) .story-caps { opacity: 0; }
 /* Once live it comes up from nothing, rather than popping in at the bottom. */
 @keyframes story-in { from { opacity: 0; } }
-.story.is-live .story-pin, .story-shade { animation: story-in 0.35s var(--ut-ease); }
+.story.is-live .story-pin { animation: story-in 0.35s var(--ut-ease); }
+/* Without scripting the story is not pinned, and there is nothing to shade. */
+html:not(.js) .story-shade { display: none; }
 .story.is-live .story-caps li.on { opacity: 1; filter: none; transform: translate(-50%, -50%); pointer-events: auto; }
 .story.is-live .cmp { margin: 0; flex: 0 0 auto; }
 /* Wider than the column: the device is the product, so it gets the room,
@@ -1429,6 +1434,8 @@ code {
   background: linear-gradient(to top, var(--ut-bg) 8%, color-mix(in srgb, var(--ut-bg) 80%, transparent) 40%, transparent);
 }
 .fm-fresh { animation: fm-in 0.45s var(--ut-ease) both; }
+/* Rows animate when the channel changes, not on the first paint. */
+.story:not(.is-settled) .fm-fresh { animation: none; }
 @media (max-width: 719px) {
   .story.is-live .story-caps { border-radius: 26px; }
   .story.is-live .story-caps li { width: min(calc(100vw - 48px), 400px); padding: 18px 22px 20px; }
