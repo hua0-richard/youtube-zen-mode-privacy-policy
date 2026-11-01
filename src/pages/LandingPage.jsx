@@ -13,6 +13,7 @@ const CHAPTERS = [
   { lead: "Only what you chose.", rest: "Your **subscriptions**, **newest first**, one line each." },
   { lead: "Yours to shape.", rest: "**One channel** or **all of them**. **Shorts off.**" },
   { lead: "Details, one click away.", rest: "Open any video **beside the list**. Nothing shifts." },
+  { lead: "A player that just stops.", rest: "**No next up.** **No recommendations** at the end." },
   { lead: "Nothing leaves your browser.", rest: "**No account**, **no server**, **no tracking**.", link: true },
 ];
 
@@ -22,7 +23,8 @@ function emphasise(text) {
 }
 
 const NARROW = { channel: "Veritasium", shorts: false };
-const STATE = [{}, {}, NARROW, NARROW, NARROW];
+const END = { ...NARROW, ended: true };
+const STATE = [{}, {}, NARROW, NARROW, END, END];
 
 const HIGHLIGHTS = [
   ["1", "line per video", "A title, a channel and an age. Fifty videos fit on one screen."],
@@ -110,11 +112,11 @@ export function LandingPage() {
 
   const step = Math.min(CHAPTERS.length - 1, Math.floor(p * CHAPTERS.length));
   /* The wipe runs across the hand-over between the first two captions. */
-  const reveal = live ? smooth((p - 0.14) / 0.12) : 1;
+  const reveal = live ? smooth((p - 0.107) / 0.12) : 1;
   /* Colour comes up first, over the opening of the pinned stretch. */
   const heat = live ? smooth(p / 0.1) : 1;
   /* The details panel slides open as the fourth caption arrives. */
-  const pane = live ? smooth((p - 0.57) / 0.09) : 0;
+  const pane = live ? smooth((p - 0.47) / 0.09) : 0;
   const now = STATE[step];
 
   const useMeasure = typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -178,7 +180,7 @@ export function LandingPage() {
               <PrivacyIcon />
             </Link>
           </p>
-          <Compare reveal={reveal} heat={heat} pane={pane} channel={now.channel} shorts={now.shorts} />
+          <Compare reveal={reveal} heat={heat} pane={pane} channel={now.channel} shorts={now.shorts} ended={!!now.ended} />
         </div>
       </section>
 

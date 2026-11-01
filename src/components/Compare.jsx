@@ -47,6 +47,7 @@ const OPEN = {
   title: "The SAT Question Everyone Got Wrong",
   meta: "11h ago · 18:24",
   thumb: "/thumbs/FUHkTs-Ipfg.jpg",
+  still: "/stills/FUHkTs-Ipfg.jpg",
   about: "A question that looks like a warm-up, and the several ways a careful reader still gets it wrong. The answer is slower than the question.",
 };
 
@@ -72,7 +73,7 @@ const DAYS = [
   ]],
 ];
 
-export function Compare({ reveal = 1, heat = 1, pane = 0, channel = "", shorts = true }) {
+export function Compare({ reveal = 1, heat = 1, pane = 0, channel = "", shorts = true, ended = false }) {
   const stageRef = useRef(null);
   const edge = Math.min(1, Math.max(0, reveal));
   /* The shadow itself is the page's, at the bottom of the screen (see
@@ -99,7 +100,7 @@ export function Compare({ reveal = 1, heat = 1, pane = 0, channel = "", shorts =
             <MenuBar />
             <div className="cmp-page">
               <div className="cmp-under">
-                <Focus channel={channel} shorts={shorts} pane={pane} />
+                <Focus channel={channel} shorts={shorts} pane={pane} ended={ended} />
               </div>
               {edge < 1 && (
                 <>
@@ -288,11 +289,95 @@ function GuideIcon({ name }) {
    "home", search, refresh and theme), the band (channels, Shorts switch,
    sort), the channel rail and the list, one row per video with the panel
    toggle at its head. Class names follow the extension's, with an fm- prefix. */
-const Focus = memo(function Focus({ channel, shorts, pane }) {
+const CHAPTERS_LIST = [
+  ["0:00", "intro"],
+  ["0:29", "the question"],
+  ["1:46", "the obvious answer"],
+  ["5:00", "where it goes wrong"],
+  ["8:36", "the slower answer"],
+];
+
+/* The extension's video page: a bar with the way back and the title, the
+   video edge to edge, then the channel, the views and the description. There
+   is nothing after the video: no "up next", no list of suggestions. */
+function Watch() {
+  const glyph = { viewBox: "0 0 24 24", fill: "currentColor" };
+  return (
+    <div className="fm-watch">
+      <div className="fm-wbar">
+        <span className="fm-back">
+          <svg viewBox="0 0 16 16" width="12" height="12">
+            <path d="M13 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {OPEN.ch}
+        </span>
+        <span className="fm-wtitle">{OPEN.title}</span>
+      </div>
+      <div className="fm-screen">
+        {/* The glow, as the extension draws it: the frame stretched to the
+            picture's box, scaled out and blurred, open at the sides. */}
+        <div className="fm-glow">
+          <img className="fm-ambient" src={OPEN.still} alt="" decoding="sync" />
+        </div>
+        <div className="fm-frame">
+          <img src={OPEN.still} alt="" decoding="sync" />
+          <span className="fm-cc">so how many times does it turn?</span>
+          <div className="fm-ctl">
+            <span className="fm-seek">
+              <i className="fm-seek-buf" />
+              <i className="fm-seek-fill" />
+            </span>
+            <span className="fm-crow">
+              <span className="fm-cbtn fm-cicon">
+                <svg {...glyph}><path d="M6 19h4V5H6zm8-14v14h4V5z" /></svg>
+              </span>
+              <span className="fm-cbtn fm-cicon">
+                <svg {...glyph}><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02" /></svg>
+              </span>
+              <span className="fm-ctime">4:12 / 18:24</span>
+              <span className="fm-tools">
+                <span className="fm-cbtn fm-cicon">
+                  <svg {...glyph}><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m-8 7H9.5v-.5h-2v3h2V13H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1zm7 0h-1.5v-.5h-2v3h2V13H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1z" /></svg>
+                </span>
+                <span className="fm-cbtn fm-crate">1×</span>
+                <span className="fm-cbtn fm-cquality">Auto</span>
+                <span className="fm-cbtn fm-cicon">
+                  <svg {...glyph}><path d="M7 14H5v5h5v-2H7zm-2-4h2V7h3V5H5zm12 7h-3v2h5v-5h-2zM14 5v2h3v3h2V5z" /></svg>
+                </span>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div className="fm-wmeta">
+          <span className="fm-ava">{OPEN.ch[0]}</span>
+          <span className="fm-wwho">
+            <b>{OPEN.ch}</b>
+            <i>Jul 15, 2026</i>
+          </span>
+          <span className="fm-wviews">18,204,311 views</span>
+          <span className="fm-wbtn on">Hide Description</span>
+          <span className="fm-wbtn">Chapters</span>
+        </div>
+        <div className="fm-desc">
+          <p>A question that looks like a warm-up, and the several ways a careful reader still gets it wrong.</p>
+          {CHAPTERS_LIST.map(([t, name]) => (
+            <p key={t}>
+              <code>{t}</code> {name}
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const Focus = memo(function Focus({ channel, shorts, pane, ended }) {
   const shown = pane > 0.01;
   const pen = { fill: "none", stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round" };
   return (
     <div className="fm" aria-hidden="true">
+      {ended ? <Watch /> : (
+      <>
       <div className="fm-head">
         <span className="fm-home">
           <svg viewBox="0 0 20 20" width="20" height="20">
@@ -325,82 +410,84 @@ const Focus = memo(function Focus({ channel, shorts, pane }) {
         </span>
       </div>
       <div className="fm-bar">
-        <span className="fm-pill">
-          <svg viewBox="0 0 16 16" width="16" height="16">
-            <path {...pen} strokeWidth="1.4" d="M2.6 3.4h10.8L9.3 8.2v4.5l-2.6 1.4V8.2z" />
-          </svg>
-          {channel ? `1 of ${RAIL.length} channels` : "All channels"}
-          <svg viewBox="0 0 16 16" width="10" height="10" className="fm-fold">
-            <path {...pen} strokeWidth="1.4" d="M4.2 6.4 8 10.1l3.8-3.7" />
-          </svg>
-        </span>
-        <span className="fm-pill">
-          Shorts
-          <span className={"fm-switch" + (shorts ? "" : " off")} />
-        </span>
-        <span className="fm-count" />
-        <span className="fm-sortwrap">
-          <span className="fm-barlabel">Sort</span>
-          <span className="fm-tabs">
-            <span className="on">Newest</span>
-            <span>Oldest</span>
-            <span>Channel</span>
+          <span className="fm-pill">
+            <svg viewBox="0 0 16 16" width="16" height="16">
+              <path {...pen} strokeWidth="1.4" d="M2.6 3.4h10.8L9.3 8.2v4.5l-2.6 1.4V8.2z" />
+            </svg>
+            {channel ? `1 of ${RAIL.length} channels` : "All channels"}
+            <svg viewBox="0 0 16 16" width="10" height="10" className="fm-fold">
+              <path {...pen} strokeWidth="1.4" d="M4.2 6.4 8 10.1l3.8-3.7" />
+            </svg>
           </span>
-        </span>
-      </div>
-      <div className="fm-cols">
-        <div className="fm-rail">
-          <span className={"fm-chan" + (channel ? "" : " on")}>
-            <span className="fm-ava fm-ava-all">
-              <svg viewBox="0 0 18 18">
-                {[5, 9, 13].map((cx) => (
-                  <circle key={cx} cx={cx} cy="9" r="3.6" fill="none" stroke="currentColor" strokeWidth="1.2" />
+          <span className="fm-pill">
+            Shorts
+            <span className={"fm-switch" + (shorts ? "" : " off")} />
+          </span>
+          <span className="fm-count" />
+          <span className="fm-sortwrap">
+            <span className="fm-barlabel">Sort</span>
+            <span className="fm-tabs">
+              <span className="on">Newest</span>
+              <span>Oldest</span>
+              <span>Channel</span>
+            </span>
+          </span>
+        </div>
+        <div className="fm-cols">
+          <div className="fm-rail">
+            <span className={"fm-chan" + (channel ? "" : " on")}>
+              <span className="fm-ava fm-ava-all">
+                <svg viewBox="0 0 18 18">
+                  {[5, 9, 13].map((cx) => (
+                    <circle key={cx} cx={cx} cy="9" r="3.6" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                  ))}
+                </svg>
+              </span>
+              <span>All channels</span>
+            </span>
+            {RAIL.map((name) => (
+              <span className={"fm-chan" + (name === channel ? " on" : "")} key={name}>
+                <span className="fm-ava">{name[0]}</span>
+                <span>{name}</span>
+              </span>
+            ))}
+          </div>
+          <div className="fm-list">
+            {DAYS.map(([day, all]) => [day, channel ? all.filter(([ch]) => ch === channel) : all]).filter(([, rows]) => rows.length).map(([day, rows]) => (
+              <div key={day + channel} className="fm-fresh">
+                <p className="fm-day">{day}</p>
+                {rows.map(([ch, title, when]) => (
+                  <div className={"fm-row" + (shown && ch === OPEN.ch && title === OPEN.title ? " on" : "")} key={ch + title}>
+                    <svg className="fm-open" viewBox="0 0 16 16" width="16" height="16">
+                      <rect x="2.25" y="3.65" width="11.5" height="8.7" rx="2" fill="none" stroke="currentColor" strokeWidth="1.3" />
+                      <path d="M10 3.65v8.7" fill="none" stroke="currentColor" strokeWidth="1.3" />
+                      <path className="fm-open-fill" d="M10 3.65h1.75a2 2 0 0 1 2 2v4.7a2 2 0 0 1-2 2H10z" fill="currentColor" />
+                    </svg>
+                    <span className="fm-ch">{ch}</span>
+                    <span className="fm-title">{title}</span>
+                    <span className="fm-when">{when}</span>
+                  </div>
                 ))}
-              </svg>
-            </span>
-            <span>All channels</span>
-          </span>
-          {RAIL.map((name) => (
-            <span className={"fm-chan" + (name === channel ? " on" : "")} key={name}>
-              <span className="fm-ava">{name[0]}</span>
-              <span>{name}</span>
-            </span>
-          ))}
-        </div>
-        <div className="fm-list">
-          {DAYS.map(([day, all]) => [day, channel ? all.filter(([ch]) => ch === channel) : all]).filter(([, rows]) => rows.length).map(([day, rows]) => (
-            <div key={day + channel} className="fm-fresh">
-              <p className="fm-day">{day}</p>
-              {rows.map(([ch, title, when]) => (
-                <div className={"fm-row" + (shown && ch === OPEN.ch && title === OPEN.title ? " on" : "")} key={ch + title}>
-                  <svg className="fm-open" viewBox="0 0 16 16" width="16" height="16">
-                    <rect x="2.25" y="3.65" width="11.5" height="8.7" rx="2" fill="none" stroke="currentColor" strokeWidth="1.3" />
-                    <path d="M10 3.65v8.7" fill="none" stroke="currentColor" strokeWidth="1.3" />
-                    <path className="fm-open-fill" d="M10 3.65h1.75a2 2 0 0 1 2 2v4.7a2 2 0 0 1-2 2H10z" fill="currentColor" />
-                  </svg>
-                  <span className="fm-ch">{ch}</span>
-                  <span className="fm-title">{title}</span>
-                  <span className="fm-when">{when}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-        {shown && (
-          <div className="fm-pane" style={{ width: `${pane * 340}px`, opacity: Math.min(1, pane * 1.6) }}>
-            <div className="fm-pane-in">
-              <div className="fm-pane-thumb">
+              </div>
+            ))}
+          </div>
+          {shown && (
+            <div className="fm-pane" style={{ width: `${pane * 340}px`, opacity: Math.min(1, pane * 1.6) }}>
+              <div className="fm-pane-in">
+                <div className="fm-pane-thumb">
                 <img src={OPEN.thumb} alt="" decoding="sync" />
               </div>
-              <p className="fm-pane-title">{OPEN.title}</p>
-              <p className="fm-pane-meta">
-                {OPEN.ch} · {OPEN.meta}
-              </p>
-              <p className="fm-pane-about">{OPEN.about}</p>
+                <p className="fm-pane-title">{OPEN.title}</p>
+                <p className="fm-pane-meta">
+                  {OPEN.ch} · {OPEN.meta}
+                </p>
+                <p className="fm-pane-about">{OPEN.about}</p>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </>
+      )}
     </div>
   );
 });
