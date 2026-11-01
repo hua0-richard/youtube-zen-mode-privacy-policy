@@ -1305,7 +1305,7 @@ code {
 .story .cmp { margin-top: 32px; }
 /* The pinned stretch is real content, not padding: a sticky box only
    travels inside its parent's content box. */
-.story.is-live::after { content: ""; display: block; height: 525svh; }
+.story.is-live::after { content: ""; display: block; height: 700svh; }
 .story.is-live .story-pin {
   isolation: isolate;
   position: sticky;
@@ -1354,7 +1354,7 @@ code {
 }
 /* With scripting, the unpinned prerender is a different layout from the live
    one, so it is not shown at all: the story appears once, already pinned. */
-.js .story:not(.is-live) { visibility: hidden; min-height: calc(100svh - 108px + 525svh); }
+.js .story:not(.is-live) { visibility: hidden; min-height: calc(100svh - 108px + 700svh); }
 /* The captions wait until the reader scrolls: at the top the hero speaks. */
 .story.is-live:not([data-away]) .story-caps { opacity: 0; }
 /* Once live it comes up from nothing, rather than popping in at the bottom. */
