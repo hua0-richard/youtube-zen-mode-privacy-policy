@@ -33,7 +33,7 @@ if (!template.includes("<!--app-->")) {
 }
 
 const meta = {
-  "/": ["Focus Mode For YouTube", "A focused YouTube: a subscriptions-only reading list. No recommendations, no home feed, no Shorts."],
+  "/": ["Focus Mode For YouTube", "Focus Mode turns YouTube into a plain list of the channels you subscribe to, newest first. No recommendations, no feed, no account, no server."],
   "/privacy": ["Privacy Policy — Focus Mode For YouTube", "Focus Mode For YouTube collects nothing, sends nothing, and has no server."],
 };
 
@@ -41,7 +41,9 @@ for (const [route, [title, description]] of Object.entries(meta)) {
   const html = template
     .replace("<!--app-->", render(route))
     .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
-    .replace(/(<meta name="description" content=")[^"]*/, `$1${description}`);
+    .replace(/(<meta name="description" content=")[^"]*/, `$1${description}`)
+    .replace(/(<meta property="og:title" content=")[^"]*/, `$1${title}`)
+    .replace(/(<meta property="og:description" content=")[^"]*/, `$1${description}`);
   const file = route === "/" ? resolve(OUT, "index.html") : resolve(OUT, route.slice(1), "index.html");
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, html);

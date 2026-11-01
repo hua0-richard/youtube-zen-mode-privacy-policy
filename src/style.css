@@ -1,3 +1,48 @@
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/roboto-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/roboto-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/roboto-latin-700-normal.woff2") format("woff2");
+}
+/* The Mac desktop in the preview is set in SF on a Mac. Anyone else gets
+   Inter, the closest open face, under its own name so nothing else changes. */
+@font-face {
+  font-family: "Mac Fallback";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Mac Fallback";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Mac Fallback";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin-700-normal.woff2") format("woff2");
+}
+
 /* Focus Mode For YouTube — the privacy policy and what the extension does.
  *
  * The palette, the type and the spacing are taken from css/list.css in the
@@ -5,6 +50,16 @@
  * not repeated here. */
 
 :root {
+  /* The site's one type scale. Every size outside the two previews is one of
+     these, so the page has eight sizes and not twenty. */
+  --t-fine: 13px; /* small print, the contents list */
+  --t-small: 14px; /* body, footer links, dates */
+  --t-base: 16px; /* navigation, buttons, card text, the policy */
+  --t-sub: 20px; /* card and section subheads */
+  --t-lead: clamp(18px, 1.8vw, 22px); /* the sentence under the headline */
+  --t-title: clamp(26px, 3.2vw, 40px); /* section headlines */
+  --t-display: clamp(40px, 6.4vw, 72px); /* the headline */
+  --t-stat: clamp(72px, 8vw, 112px); /* the big numerals */
   --ut-bg: #ffffff;
   --ut-fg: #1a1a1a;
   --ut-mid: #525252;
@@ -104,14 +159,14 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { scroll-padding-top: 80px; }
+html { scroll-padding-top: 124px; }
 
 body {
   margin: 0;
   background: var(--ut-bg);
   color: var(--ut-fg);
   font-family: var(--ut-text);
-  font-size: var(--ut-read);
+  font-size: var(--t-small);
   font-weight: var(--ut-weight-read);
   line-height: 1.6;
   letter-spacing: var(--ut-read-track);
@@ -135,56 +190,73 @@ body {
   position: sticky;
   top: 0;
   z-index: 2;
-  height: 64px;
-  background: var(--ut-bg);
+  display: flow-root; /* keeps the pill's margin inside the sticky box */
+  height: 108px;
+  pointer-events: none; /* only the pill takes the pointer */
 }
-.hdr[data-scrolled] {
-  box-shadow: 0 1px 0 0 var(--ut-line);
-}
+/* A floating pill rather than a bar: the page scrolls beneath it, blurred. */
 .hdr-bar {
+  pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
-  max-width: var(--ut-measure);
+  gap: 0;
+  width: min(calc(100% - 32px), 780px);
   height: 64px;
-  margin: 0 auto;
-  padding: 0 var(--ut-edge);
+  margin: 28px auto 0;
+  /* One inset all round, so every control is the same distance from the edge
+     it is nearest to and its curve runs concentric with the pill's: 32px
+     outside, 24px in the 48px controls, 8px between. */
+  padding: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ut-bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px var(--ut-line), 0 8px 24px -12px rgba(0, 0, 0, 0.35);
 }
+.hdr-home { margin-right: 12px; }
+.hdr-home:hover { background: color-mix(in srgb, var(--ut-fg) 6%, transparent); }
 .hdr-home {
+  transition: background-color var(--ut-quick) var(--ut-ease);
   display: inline-flex;
   align-items: center;
-  margin-left: -8px;
-  padding: 8px;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
   color: var(--ut-fg);
   text-decoration: none;
 }
 .mark {
   flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   color: var(--ut-accent);
 }
 .hdr-nav {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
   height: 100%;
 }
 .hdr-nav a {
   display: inline-flex;
   align-items: center;
-  height: 32px;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 24px;
   color: var(--ut-dim);
-  font-size: 14px;
+  font-size: var(--t-base);
   font-weight: 400;
   line-height: 20px;
   letter-spacing: normal;
   text-decoration: none;
-  transition: color var(--ut-quick) var(--ut-ease);
+  transition: color var(--ut-quick) var(--ut-ease), background-color var(--ut-quick) var(--ut-ease);
 }
-.hdr-nav a:hover,
-.hdr-nav a[aria-current="page"] {
+.hdr-nav a:hover { color: var(--ut-fg); background: color-mix(in srgb, var(--ut-fg) 6%, transparent); }
+.hdr-nav a[aria-current="page"],
+.hdr-nav a[aria-current="page"]:hover {
   color: var(--ut-fg);
+  background: var(--ut-hover);
 }
 /* The one control on the site, and so the one button. */
 .btn {
@@ -209,17 +281,17 @@ body {
    header. It carries the state it will move you to, not the state you are
    in: the sun offers light and appears in the dark. */
 .btn-icon {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   margin-left: auto;
   padding: 0;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 24px;
 }
 .btn-icon:hover { background: var(--ut-hover); }
 .btn-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 /* Which of the two shows is decided in CSS rather than by the script, so the
    button is never briefly wrong on load and is still right with scripting
@@ -245,14 +317,14 @@ body {
 
 .lede {
   margin: 12px 0 0;
-  font-size: var(--ut-read-lg);
+  font-size: var(--t-base);
   line-height: 1.5;
   color: var(--ut-mid);
   letter-spacing: var(--ut-track-lg);
 }
 .stamp {
   margin: 8px 0 0;
-  font-size: var(--ut-label);
+  font-size: var(--t-small);
   color: var(--ut-dim);
   letter-spacing: var(--ut-track);
 }
@@ -272,26 +344,26 @@ body {
 .legal-head h1 {
   margin: 0;
   color: var(--ut-heading);
-  font-size: clamp(32px, 5vw, 40px);
+  font-size: var(--t-title);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.04em;
 }
 .legal-head .stamp {
   margin-top: 16px;
-  font-size: 14px;
+  font-size: var(--t-small);
 }
 .legal-toc {
   position: sticky;
   top: 88px;
   padding-top: 10px;
-  font-size: 13px;
+  font-size: var(--t-fine);
   line-height: 1.4;
 }
 .legal-toc p {
   margin: 0 0 12px;
   color: var(--ut-heading);
-  font-size: 13px;
+  font-size: var(--t-fine);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -317,7 +389,7 @@ main .legal-toc a {
 .legal-toc a:hover { color: var(--ut-heading); }
 .legal-doc {
   min-width: 0;
-  font-size: 16px;
+  font-size: var(--t-base);
   line-height: 1.7;
   letter-spacing: -0.011em;
 }
@@ -325,7 +397,7 @@ main .legal-toc a {
 .legal-doc .claim {
   margin-top: 16px;
   color: var(--ut-heading);
-  font-size: 16px;
+  font-size: var(--t-base);
   font-weight: 500;
   line-height: 1.6;
   letter-spacing: inherit;
@@ -337,7 +409,7 @@ main .legal-toc a {
 .legal .sect h2 {
   margin: 0 0 14px;
   color: var(--ut-heading);
-  font-size: 20px;
+  font-size: var(--t-sub);
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.024em;
@@ -394,7 +466,7 @@ code {
    The one sentence the policy is. Larger than the body, not boxed: a fill
    and a bar made it a card on a page that is otherwise prose. */
 .claim {
-  font-size: var(--ut-read-lg);
+  font-size: var(--t-base);
   line-height: 1.45;
   letter-spacing: var(--ut-track-lg);
 }
@@ -408,17 +480,48 @@ code {
 
 /* ---------- the foot of a page ---------- */
 
+/* The footer runs the width of the page's wide sections, not the text
+   column: the brand at one end, the pages at the other, the small print under
+   a rule of its own. */
 .foot {
-  margin-top: 48px;
-  padding-top: 20px;
+  --foot-w: min(calc(100vw - 48px), 1240px);
+  width: var(--foot-w);
+  margin: 96px calc((100% - var(--foot-w)) / 2) 0;
+  padding-top: 32px;
   border-top: 1px solid var(--ut-line);
-  font-size: var(--ut-label);
+  font-size: var(--t-small);
+  line-height: 20px;
   color: var(--ut-dim);
-  letter-spacing: var(--ut-track);
+  letter-spacing: var(--ut-read-track);
+}
+.foot-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.foot a { border-bottom: 0; }
+.foot-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ut-fg);
+  font-size: var(--t-base);
+  font-weight: 500;
+}
+.foot-brand .mark { width: 18px; height: 18px; color: var(--ut-fg); }
+.foot-nav { display: flex; align-items: center; gap: 28px; }
+.foot-nav a { color: var(--ut-dim); transition: color var(--ut-quick) var(--ut-ease); }
+.foot-nav a:hover { color: var(--ut-fg); }
+.foot-fine { margin: 32px 0 0; font-size: var(--t-fine); color: var(--ut-dim); }
+@media (max-width: 560px) {
+  .foot-top { flex-direction: column; align-items: flex-start; gap: 20px; }
 }
 
 @media (max-width: 720px) {
-  .hdr-bar { padding: 0 var(--ut-gap); }
+  .hdr-bar { padding: 8px; }
+  .hdr-nav a { padding: 0 16px; }
+  .hdr-home { margin-right: 6px; }
   .wrap { padding: 36px var(--ut-gap) 64px; }
 }
 
@@ -433,44 +536,57 @@ code {
    Vercel-style: ink on white, hairline borders, one solid button and one
    outlined, no colour beyond the mark. */
 
-.hero { padding: 96px 0 0; }
+.hero { padding: 12svh 0 6svh; text-align: center; }
 .hero h1 {
-  margin: 0;
+  text-wrap: balance;
+  margin: 0 auto;
+  max-width: 11em;
   color: var(--ut-heading);
-  font-size: clamp(34px, 6vw, 56px);
-  line-height: 1.05;
-  font-weight: var(--ut-weight-ui);
-  letter-spacing: -0.045em;
+  font-size: var(--t-display);
+  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: -0.04em;
 }
-.hero h1 { max-width: 12em; }
-.hero .lede { max-width: 30rem; font-size: 18px; line-height: 1.55; margin-top: 28px; }
+.hero .lede {
+  text-wrap: balance;
+  max-width: 30em;
+  margin: 22px auto 0;
+  font-size: var(--t-lead);
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  color: var(--ut-mid);
+}
 
-.cta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 44px;
-}
-.btn-solid,
-.btn-line {
+/* The cue under the hero: a button, and a chevron that bobs to say "down". */
+.cue { margin: 32px 0 0; transition: opacity 0.3s var(--ut-ease); }
+.cue[data-away] { opacity: 0; pointer-events: none; }
+.cue-btn {
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: var(--ut-r);
-  border: 1px solid var(--ut-fg);
-  font-size: var(--ut-read);
-  font-weight: var(--ut-weight-label);
-  letter-spacing: var(--ut-read-track);
-  text-decoration: none;
-  transition: background var(--ut-quick) var(--ut-ease),
-    border-color var(--ut-quick) var(--ut-ease);
+  gap: 10px;
+  height: 52px;
+  padding: 0 22px 0 28px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ut-fg) 9%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ut-fg) 14%, transparent), 0 10px 30px -14px rgba(0, 0, 0, 0.45);
+  color: var(--ut-fg);
+  font: inherit;
+  font-size: var(--t-base);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background-color var(--ut-quick) var(--ut-ease), transform var(--ut-press, 80ms) var(--ut-ease);
 }
-.btn-solid { background: var(--ut-fg); color: var(--ut-bg); }
-.btn-solid[aria-disabled="true"] { cursor: default; }
-.btn-line { background: var(--ut-bg); color: var(--ut-fg); border-color: var(--ut-line); }
-.btn-line:hover { background: var(--ut-hover); border-color: var(--ut-edge-lit); }
+.cue-btn:focus-visible { outline: 2px solid var(--ut-accent); outline-offset: 3px; }
+.cue-btn:hover { background: color-mix(in srgb, var(--ut-fg) 15%, transparent); }
+.cue-btn:active { transform: scale(0.98); }
+.cue-btn svg { width: 18px; height: 18px; animation: cue-bob 1.8s ease-in-out infinite; }
+@keyframes cue-bob { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(2px); } }
+@media (prefers-reduced-motion: reduce) { .cue-btn svg { animation: none; } }
 
 .facts { margin: 16px 0 0; border-top: 1px solid var(--ut-line); }
 .facts > div {
@@ -486,177 +602,125 @@ code {
   .facts > div { grid-template-columns: 1fr; gap: 2px; }
 }
 
-/* The prose-link rule above must not put an underline on a button. */
-main .cta a { border-bottom: 1px solid var(--ut-line); }
-main .cta a.btn-solid { border-color: var(--ut-fg); }
-
 @media (min-width: 721px) {
-  .wrap { padding-bottom: 128px; }
-  .foot { margin-top: 96px; }
+  .wrap { padding-bottom: 96px; }
 }
 @media (max-width: 720px) {
   .hero { padding-top: 56px; }
 }
 
-/* The one action on the page. */
-.btn-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 18px 0 14px;
-  border: 0;
-  border-radius: var(--ut-r);
-  background: var(--ut-fg);
-  color: var(--ut-bg);
-  font-family: inherit;
-  font-size: var(--ut-read-lg);
-  font-weight: var(--ut-weight-ui);
-  letter-spacing: var(--ut-read-track);
-  cursor: pointer;
-  transition: opacity var(--ut-quick) var(--ut-ease), transform var(--ut-press) var(--ut-ease);
-}
-.btn-action:hover { opacity: 0.88; }
-.btn-action:active { transform: translateY(1px); }
-.btn-action[aria-disabled="true"] { cursor: default; }
-.btn-action .icon-lock { width: 16px; height: 16px; flex: 0 0 auto; }
-main .cta a.btn-action { border-bottom: 0; }
-
-/* ---------- the comparison ----------
-   YouTube is a sheet laid over Focus Mode. A corner of it is folded back.
-   `--peel` is a length so the fold, the cut, and the flap all move together.
-   `--sheen` is the strength of the highlight on that fold. */
-
-@property --peel {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 112px;
-}
-@property --sheen {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0.35;
-}
-
+/* ---------- the preview ----------
+   Focus Mode underneath, YouTube on top, both inside a laptop. The page hands
+   in how much of the screen has become Focus Mode, and the YouTube layer is
+   clipped to what is left of it, with a hairline where the two meet. The
+   frame is an image laid over the top; the preview shows through the
+   transparent screen. */
 .cmp { margin: 80px 0 0; }
+.cmp-device { position: relative; width: min(100%, 1240px); margin-inline: auto; }
+/* A soft floor shadow, so the laptop sits on the page instead of floating. */
+.cmp-device::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -14px;
+  height: 28px;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  filter: blur(18px);
+}
+.cmp-frame { position: relative; z-index: 5; display: block; width: 100%; height: auto; pointer-events: none; }
 .cmp-stage {
-  --peel: 112px;
-  --sheen: 0.35;
-  --peel-paper: #f3f3f3;
-  --peel-shade: #d4d4d4;
-  --peel-highlight: #ffffff;
-  --peel-crease: #bdbdbd;
-  position: relative;
+  /* The screen in the frame image: x 125-1090, y 18-645 of 1216 x 735. */
+  position: absolute;
+  left: 10.2%;
+  top: 2.4%;
+  width: 79.7%;
+  height: 85.7%;
   z-index: 0;
   isolation: isolate;
-  container-type: size;
-  width: 100%;
-  aspect-ratio: 7 / 5;
-  border: 0;
-  border-radius: var(--ut-r-lg);
   overflow: hidden;
   background: var(--ut-bg);
-  transition: --peel 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    --sheen 0.5s ease;
+  --k: 0.6;
 }
-.cmp-stage:hover,
-.cmp-stage:focus-within { --peel: 168px; --sheen: 0.55; }
-/* Open rolls the sheet past the top-left, then the fold fades once it's gone.
-   `--peel-open` is the stage's width plus height, plus enough to clear the roll. */
-.cmp-stage.is-open,
-.cmp-stage.is-open:hover,
-.cmp-stage.is-open:focus-within {
-  --peel: var(--peel-open, 1400px);
-  --sheen: 1;
-  transition: --peel 1.1s cubic-bezier(0.5, 0, 0.2, 1),
-    --sheen 0.6s ease;
+/* The desktop, at a laptop's own size, scaled down to the screen. */
+.cmp-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1240px;
+  height: 806px;
+  display: flex;
+  flex-direction: column;
+  container-type: size;
+  transform: scale(var(--k));
+  transform-origin: 0 0;
+  /* Chrome's own palette, borrowed from the page theme. */
+  --mac-strip: color-mix(in srgb, var(--ut-fg) 13%, var(--ut-bg));
+  --mac-bar: color-mix(in srgb, var(--ut-fg) 6%, var(--ut-bg));
+  --mac-ink: color-mix(in srgb, var(--ut-fg) 82%, var(--ut-bg));
+  --mac-dim: color-mix(in srgb, var(--ut-fg) 55%, var(--ut-bg));
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Mac Fallback", system-ui, sans-serif;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  color: var(--mac-ink);
 }
-.cmp-peel { transition: opacity 0.2s ease; }
-.cmp-stage.is-open:not(.is-drag) .cmp-peel {
-  opacity: 0;
-  transition: opacity 0.28s ease 0.82s;
-}
-/* While held, the fold is exactly under the pointer. */
-.cmp-stage.is-drag { --sheen: 0.8; transition: none; }
-:root[data-theme="dark"] .cmp-stage {
-  --peel-paper: #292929;
-  --peel-shade: #1f1f1f;
-  --peel-highlight: #3a3a3a;
-  --peel-crease: #141414;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .cmp-stage {
-    --peel-paper: #292929;
-    --peel-shade: #1f1f1f;
-    --peel-highlight: #3a3a3a;
-    --peel-crease: #141414;
-  }
-}
-.cmp-stage:focus-within {
-  outline: 2px solid var(--ut-accent);
-  outline-offset: 2px;
-}
+.cmp-page { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
 .cmp-under,
 .cmp-over {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: inherit;
 }
-/* The fold is the line x + y = W + H - peel, running up and to the right from
-   the bottom-left. The sheet is everything on the corner side of it. */
-.cmp-over {
-  clip-path: polygon(
-    -3000px -3000px,
-    calc(100% + 3000px) -3000px,
-    calc(100% + 3000px) calc(100% - var(--peel) - 3000px),
-    calc(100% - var(--peel) - 3000px) calc(100% + 3000px),
-    -3000px calc(100% + 3000px)
-  );
+/* ---- macOS: the menu bar and a Chrome window ---- */
+.mac-menu {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 22px 0 20px;
+  /* Its own tone, deeper than the window under it: the menu bar is the
+     desktop's, not Chrome's. */
+  background: color-mix(in srgb, var(--ut-fg) 3%, var(--ut-bg));
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--ut-fg) 10%, transparent);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: -0.006em;
 }
+.mac-menu-l, .mac-menu-r { display: flex; align-items: center; height: 30px; white-space: nowrap; }
+.mac-menu-l { gap: 20px; }
+.mac-menu-l b { font-weight: 700; }
+.mac-menu-r { gap: 14px; }
+.mac-menu-r span { font-variant-numeric: tabular-nums; }
+.mac-i { display: block; flex: 0 0 auto; }
 .cmp-over .yt { height: 100%; }
-/* The flap is the missing corner, flipped across the fold so it lies on the
-   sheet. A thin crease sits on that edge, and the shadow falls past it. */
-.cmp-peel {
+/* Where the two meet: a soft blur either side of the line, fading out so it
+   has no edges of its own, and the hairline crisp in the middle of it. */
+.cmp-edge {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
   z-index: 2;
+  width: 36px;
+  margin-left: -18px;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 38%, #000 62%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 38%, #000 62%, transparent);
   pointer-events: none;
-  filter: drop-shadow(4px 6px 10px rgb(0 0 0 / 0.16));
 }
-.cmp-shadow { display: none; }
-.cmp-flap {
+.cmp-line {
   position: absolute;
-  inset: 0;
-  transform-origin: 100% 100%;
-  clip-path: polygon(
-    100% calc(100% - var(--peel)),
-    100% 100%,
-    calc(100% - var(--peel)) 100%
-  );
-  background-image: linear-gradient(
-    -45deg,
-    var(--peel-paper) calc(var(--peel) * 0.207),
-    var(--peel-shade) calc(var(--peel) * 0.546),
-    var(--peel-highlight) calc(var(--peel) * 0.68),
-    var(--peel-crease) calc(var(--peel) * 0.707)
-  );
-  transform: translate(calc(var(--peel) * -1), calc(var(--peel) * -1)) matrix(0, -1, -1, 0, 0, 0);
-}
-.cmp-hit {
-  position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
   z-index: 3;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: grab;
-  touch-action: none;
+  width: 1px;
+  background: var(--ut-edge-lit);
+  pointer-events: none;
 }
-.cmp-stage.is-drag .cmp-hit { cursor: grabbing; }
-.cmp-hit:focus,
-.cmp-hit:focus-visible { outline: none; }
 
 /* YouTube, as the home is: a bar, a guide, chips, a grid, then Shorts.
    Its colours are its own, and they follow this page's theme.
@@ -691,8 +755,12 @@ main .cta a.btn-action { border-bottom: 0; }
     radial-gradient(32% 30% at 88% 72%, var(--glow-4), transparent 70%),
     var(--y-bg);
   color: var(--y-fg);
-  font-size: 13px;
-  line-height: 1.3;
+  /* YouTube's own face: Roboto, then Arial, as youtube.com sets it. */
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: normal;
+  font-variant-numeric: normal;
 }
 .yt-bar,
 .yt-body { filter: var(--yt-filter); }
@@ -744,9 +812,10 @@ main .cta a.btn-action { border-bottom: 0; }
   align-items: center;
   gap: 6px;
   flex: 0 0 auto;
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: -0.5px;
 }
 .yt-search {
   display: flex;
@@ -772,11 +841,40 @@ main .cta a.btn-action { border-bottom: 0; }
   background: var(--y-fill);
   color: var(--y-fg);
 }
+.yt-mic {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--y-fill);
+  color: var(--y-fg);
+}
+.yt-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.yt-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px 0 12px;
+  border-radius: 18px;
+  background: var(--y-fill);
+  font-size: 14px;
+  font-weight: 500;
+}
+.yt-bell { color: var(--y-fg); }
 .yt-avatar {
   flex: 0 0 auto;
   width: 32px;
   height: 32px;
-  margin-left: 12px;
+  margin-left: 0;
   border-radius: 50%;
   background: var(--y-fill);
 }
@@ -788,6 +886,7 @@ main .cta a.btn-action { border-bottom: 0; }
   padding: 4px 0;
   flex: 0 0 auto;
   font-size: 10px;
+  line-height: 14px;
   color: var(--y-fg);
   text-align: center;
 }
@@ -818,13 +917,14 @@ main .cta a.btn-action { border-bottom: 0; }
 }
 .yt-chips span {
   flex: 0 0 auto;
-  height: 28px;
+  height: 32px;
   padding: 0 12px;
   border-radius: 8px;
   background: var(--y-chip);
   color: var(--y-fg);
-  font-size: 13px;
-  line-height: 28px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 32px;
 }
 .yt-chips .on { background: var(--y-on); color: var(--y-on-fg); }
 .yt-grid { display: flex; gap: 14px; flex: 0 0 auto; padding: 0 16px; }
@@ -867,14 +967,15 @@ main .cta a.btn-action { border-bottom: 0; }
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.78);
   color: #fff;
-  font-size: 11px;
-  line-height: 1.3;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
 }
 .yt-card p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 22px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -882,9 +983,10 @@ main .cta a.btn-action { border-bottom: 0; }
 }
 .yt-card small {
   display: block;
-  margin-top: 3px;
+  margin-top: 0;
   color: var(--y-mid);
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -895,8 +997,9 @@ main .cta a.btn-action { border-bottom: 0; }
   align-items: center;
   gap: 8px;
   margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
 }
 .yt-shorts div { display: flex; gap: 8px; align-items: flex-start; }
 .yt-shorts > div > span {
@@ -916,88 +1019,358 @@ main .cta a.btn-action { border-bottom: 0; }
   .yt-more { display: flex; }
 }
 
-/* The extension: the mark, a search, the channel rail, and the list
-   grouped by day. It uses this page's palette, which is the extension's. */
+/* The extension's home screen. Every value is the extension's own, from
+   css/list.css: the same tokens, the same sizes, the same radii. */
 .fm {
   height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--ut-bg);
   color: var(--ut-fg);
+  font-family: var(--ut-text);
+  font-size: var(--ut-read);
+  line-height: 20px;
+  letter-spacing: var(--ut-read-track);
+  font-optical-sizing: auto;
+  font-variant-numeric: tabular-nums;
 }
 .fm-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 12px;
+  gap: var(--ut-gap-lg);
+  padding: 12px var(--ut-edge);
   border-bottom: 1px solid var(--ut-line);
   flex: 0 0 auto;
 }
-.fm-mark { width: 18px; height: 18px; flex: 0 0 auto; }
+.fm-home { display: flex; flex: 0 0 auto; color: var(--ut-fg); }
+/* On the feed the brand is also .ut-chan-title, which sets it as a name
+   rather than a label: sentence case, reading size, 20ch wide. */
+.fm-brand {
+  flex: 0 0 auto;
+  width: 20ch;
+  overflow: hidden;
+  font-size: var(--ut-read);
+  font-weight: 500;
+  letter-spacing: var(--ut-read-track);
+  white-space: nowrap;
+}
 .fm-search {
   display: flex;
   align-items: center;
-  flex: 1 1 auto;
+  gap: var(--ut-gap-sm);
+  flex: 0 1 320px;
   min-width: 0;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: var(--ut-r);
+  height: var(--ut-ctl);
+  padding: 0 var(--ut-gap-sm);
+  border-radius: var(--ut-r-lg);
   background: var(--ut-hover);
   color: var(--ut-dim);
-  font-size: 12px;
-}
-.fm-count,
-.fm-act {
-  flex: 0 0 auto;
-  color: var(--ut-dim);
-  font-size: 12px;
+  font-size: var(--ut-read-sm);
+  letter-spacing: -0.003em;
   white-space: nowrap;
+}
+.fm-search svg { flex: 0 0 auto; }
+.fm-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; flex: 0 0 auto; }
+.fm-icon {
+  display: inline-flex;
+  align-items: center;
+  height: var(--ut-ctl);
+  padding: 0 8px;
+  border-radius: var(--ut-r);
+  color: var(--ut-dim);
+}
+.fm-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ut-gap-sm);
+  min-height: calc(var(--ut-ctl) + 2 * var(--ut-gap) + 1px);
+  padding: var(--ut-gap) var(--ut-edge);
+  border-bottom: 1px solid var(--ut-line);
+  flex: 0 0 auto;
+  font-size: var(--ut-label);
+  font-weight: 500;
+  letter-spacing: var(--ut-track);
+}
+.fm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--ut-ctl);
+  padding: 0 10px;
+  border-radius: var(--ut-r-lg);
+  background: var(--ut-hover);
+  color: var(--ut-mid);
+  font-weight: 590;
+  line-height: 1;
+  white-space: nowrap;
+}
+.fm-fold { margin-right: -2px; opacity: 0.85; }
+.fm-switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--ut-fg);
+}
+.fm-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ut-bg);
+}
+.fm-count { flex: 1 1 96px; min-width: 0; }
+.fm-sortwrap { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.fm-barlabel { color: var(--ut-dim); }
+.fm-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--ut-r-lg);
+  background: var(--ut-hover);
+}
+.fm-tabs span {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--ut-ctl) - 4px);
+  padding: 0 12px;
+  border-radius: calc(var(--ut-r-lg) - 2px);
+  color: var(--ut-dim);
+  font-weight: 590;
+  line-height: 1;
+}
+.fm-tabs .on {
+  color: var(--ut-fg);
+  background: var(--ut-raise);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+:root[data-theme="dark"] .fm-tabs .on { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fm-tabs .on { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
 }
 .fm-cols { display: flex; min-height: 0; flex: 1 1 auto; }
 .fm-rail {
-  flex: 0 0 124px;
-  padding: 8px 0;
-  border-right: 1px solid var(--ut-line);
+  flex: 0 0 var(--ut-side, 196px);
+  width: 196px;
+  padding: var(--ut-gap-sm) 0 0;
   overflow: hidden;
 }
-.fm-rail span {
-  display: block;
-  padding: 6px 14px;
+.fm-chan {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 8px var(--ut-edge);
+  border-left: 2px solid transparent;
   color: var(--ut-mid);
-  font-size: 13px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-.fm-rail span:first-child {
+.fm-chan span:last-child { overflow: hidden; text-overflow: ellipsis; }
+.fm-chan.on {
   color: var(--ut-fg);
-  font-weight: var(--ut-weight-label);
+  background: var(--ut-hover);
+  border-left-color: var(--ut-accent);
+  font-weight: 500;
 }
+.fm-ava {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--ut-line);
+  color: var(--ut-mid);
+  font-size: 9px;
+  font-weight: 590;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.fm-ava-all { background: transparent; color: inherit; }
+.fm-ava-all svg { width: 100%; height: 100%; }
 .fm-list { min-width: 0; flex: 1 1 auto; overflow: hidden; }
 .fm-day {
   margin: 0;
-  padding: 16px 16px 2px;
+  padding: 32px var(--ut-edge) var(--ut-gap-sm) 68px;
   color: var(--ut-dim);
-  font-size: 12px;
 }
+.fm-list > div:first-child .fm-day { padding-top: 16px; }
 .fm-row {
-  display: grid;
-  grid-template-columns: 7.2rem minmax(0, 1fr) 2rem;
+  display: flex;
+  align-items: baseline;
   gap: 12px;
-  padding: 7px 16px;
-  font-size: 13px;
+  min-height: 36px;
+  padding: 8px var(--ut-edge);
+  border-left: 2px solid transparent;
 }
-.fm-row span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fm-row span:first-child { color: var(--ut-mid); }
-.fm-row span:last-child { color: var(--ut-dim); text-align: right; font-size: 12px; }
+/* The open row: the ground held on, the accent rule down the left, and the
+   panel mark filled in. */
+.fm-row.on { background: var(--ut-hover); border-left-color: var(--ut-accent); }
+.fm-row.on .fm-open { color: var(--ut-accent); }
+.fm-open-fill { opacity: 0; }
+.fm-row.on .fm-open-fill { opacity: 1; }
+/* The details panel: a column of its own beside the list, which gives up the
+   room rather than being covered. */
+.fm-pane {
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-left: 1px solid var(--ut-line);
+  background: var(--ut-bg);
+}
+.fm-pane-in { width: 340px; padding: 20px 24px 24px; }
+.fm-pane-thumb { aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: var(--ut-line); }
+.fm-pane-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fm-pane-title { margin: 18px 0 0; font-size: var(--ut-read); font-weight: 500; line-height: 20px; color: var(--ut-fg); }
+.fm-pane-meta { margin: 6px 0 0; font-size: var(--ut-read-sm); color: var(--ut-mid); letter-spacing: -0.003em; }
+.fm-pane-about { margin: 16px 0 0; font-size: var(--ut-read-sm); line-height: 20px; color: var(--ut-dim); letter-spacing: -0.003em; }
+.fm-open { flex: 0 0 auto; align-self: center; margin-block: -3px; box-sizing: content-box; padding: 6px; color: var(--ut-line); }
+.fm-ch {
+  flex: 0 0 148px;
+  color: var(--ut-mid);
+  font-size: var(--ut-read-sm);
+  letter-spacing: -0.003em;
+}
+.fm-title { flex: 1 1 auto; min-width: 0; }
+.fm-ch,
+.fm-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fm-when {
+  flex: 0 0 74px;
+  text-align: right;
+  font-size: var(--ut-label);
+  font-weight: 500;
+  letter-spacing: var(--ut-track);
+  color: var(--ut-dim);
+  white-space: nowrap;
+}
+
+/* The pinned story. Without JavaScript this is captions above the preview;
+   `is-live` pins the stage and lets the scroll choose the caption and drive
+   the peel. Two-tone headlines: the claim in ink, the rest a step down. */
+.story-caps { list-style: none; margin: 64px 0 0; padding: 0; display: grid; gap: 32px; text-align: center; }
+.story-caps h2 {
+  text-wrap: balance;
+  margin: 0 auto;
+  max-width: 20em;
+  font-size: var(--t-title);
+  line-height: 1.12;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--ut-dim);
+}
+.story-caps h2 span { color: var(--ut-heading); font-weight: 500; }
+.story-caps a { color: var(--ut-heading); border-bottom: 0; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.story .cmp { margin-top: 32px; }
+/* The pinned stretch is real content, not padding: a sticky box only
+   travels inside its parent's content box. */
+.story.is-live::after { content: ""; display: block; height: 525svh; }
+.story.is-live .story-pin {
+  position: sticky;
+  top: 108px;
+  height: calc(100svh - 108px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+.story.is-live .story-caps { display: grid; margin: 0; gap: 0; }
+.story.is-live .story-caps li {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ut-ease), transform 0.4s var(--ut-ease);
+}
+.story.is-live .story-caps li.on { opacity: 1; transform: none; pointer-events: auto; }
+.story.is-live .cmp { margin: 0; flex: 0 0 auto; }
+/* Wider than the column: the device is the product, so it gets the room,
+   and its size is held to what fits beside the caption. */
+.story.is-live .cmp-device {
+  --w: min(calc(100vw - 48px), 1240px, calc((100svh - 108px - 190px) / 0.604));
+  width: var(--w);
+  /* Wider than its column, so auto margins would pin it to the left. */
+  margin-inline: calc((100% - var(--w)) / 2);
+}
+@keyframes fm-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* The short version: three numbers, set large and light. */
+.highlights { margin-top: 12svh; text-align: center; }
+.highlights h2 {
+  margin: 0;
+  font-size: var(--t-title);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  color: var(--ut-heading);
+}
+.hl-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 56px auto 0;
+  width: min(calc(100vw - 48px), 1240px);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.hl-card {
+  padding: 40px 28px 32px;
+  border-radius: 20px;
+  background: var(--ut-fill);
+  box-shadow: inset 0 0 0 1px var(--ut-line);
+  text-align: left;
+}
+.hl-card p { margin: 0; }
+.hl-card .hl-n {
+  font-size: var(--t-stat);
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  color: var(--ut-heading);
+}
+.hl-card h3 {
+  margin: 24px 0 6px;
+  font-size: var(--t-sub);
+  line-height: 1.15;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ut-heading);
+}
+.hl-card p:last-child { color: var(--ut-dim); font-weight: 400; font-size: var(--t-base); line-height: 1.45; }
+@media (max-width: 860px) { .hl-grid { grid-template-columns: 1fr; } }
+/* The shadow across the bottom of the screen: until the story reaches the
+   video, the preview rises out of it rather than sitting there in full colour. */
+.story-shade {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55svh;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--ut-bg) 8%, color-mix(in srgb, var(--ut-bg) 80%, transparent) 40%, transparent);
+}
+.fm-fresh { animation: fm-in 0.45s var(--ut-ease) both; }
+@media (prefers-reduced-motion: reduce) {
+  .story.is-live .story-caps li { transition: none; transform: none; }
+  .fm-fresh { animation: none; }
+}
+.fm-switch.off { background: var(--ut-edge-lit); }
+.fm-switch.off::after { left: 2px; }
 
 @media (max-width: 720px) {
   .cmp { margin-top: 48px; }
-  .cmp-stage { --peel: 112px; aspect-ratio: 1; }
-  .cmp-stage:hover,
-  .cmp-stage:focus-within { --peel: 168px; }
-  .yt-guide, .fm-rail { display: none; }
+  .yt-guide, .yt-mic, .yt-create, .yt-bell, .fm-rail, .fm-actions, .fm-barlabel { display: none; }
+  .fm-head, .fm-bar, .fm-row { padding-inline: 14px; gap: 10px; }
+  .fm-ch { flex-basis: 84px; }
+  .fm-when { flex-basis: 52px; }
+  .fm-day { padding-left: 14px; }
+  .fm-open { display: none; }
   .yt-info { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }
   .yt-ava { width: 28px; height: 28px; }
   .yt-shorts > div > span { max-width: 72px; }
