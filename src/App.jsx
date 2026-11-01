@@ -1,6 +1,6 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import { Footer } from "./components/Footer.jsx";
 import { Header } from "./components/Header.jsx";
-import { Mark } from "./components/Mark.jsx";
 import { LandingPage } from "./pages/LandingPage.jsx";
 import { PrivacyPage } from "./pages/PrivacyPage.jsx";
 
@@ -17,19 +17,7 @@ export function App() {
             <Route path="*" element={<LandingPage />} />
           </Routes>
         </main>
-        <footer className="foot">
-          <div className="foot-top">
-            <Link to="/" className="foot-brand">
-              <Mark />
-              Focus Mode For YouTube
-            </Link>
-            <nav className="foot-nav" aria-label="Footer">
-              <Link to="/">Home</Link>
-              <Link to="/privacy">Privacy policy</Link>
-            </nav>
-          </div>
-          <p className="foot-fine">Focus Mode For YouTube is not affiliated with YouTube or Google.</p>
-        </footer>
+        <Footer />
       </div>
     </>
   );

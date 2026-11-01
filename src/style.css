@@ -58,6 +58,7 @@
   --t-sub: 20px; /* card and section subheads */
   --t-lead: clamp(18px, 1.8vw, 22px); /* the sentence under the headline */
   --t-title: clamp(26px, 3.2vw, 40px); /* section headlines */
+  --t-cap: clamp(19px, 2.1vw, 25px); /* story captions and the section heading under them */
   --t-display: clamp(40px, 6.4vw, 72px); /* the headline */
   --t-stat: clamp(72px, 8vw, 112px); /* the big numerals */
   --ut-bg: #ffffff;
@@ -72,6 +73,7 @@
   /* Ink is "this one": focus, and a link (white in the dark theme). Red is
      YouTube's, spent once, on the mark. */
   --ut-heading: #000000;
+  --ut-em: #0a60ff; /* emphasis in the captions */
   --ut-accent: #1a1a1a;
   --ut-link: #1a1a1a;
   --ut-mark: #ff0000;
@@ -131,6 +133,7 @@
     --ut-hover: #1f1f1f;
     --ut-raise: #2a2a2a;
     --ut-heading: #ededed;
+    --ut-em: #5e9bff;
     --ut-accent: #ffffff;
     --ut-link: #ffffff;
     --ut-mark: #ff0000;
@@ -148,6 +151,7 @@
   --ut-hover: #1f1f1f;
   --ut-raise: #2a2a2a;
   --ut-heading: #ededed;
+  --ut-em: #5e9bff;
   --ut-accent: #ffffff;
   --ut-link: #ffffff;
   --ut-mark: #ff0000;
@@ -208,10 +212,10 @@ body {
      outside, 24px in the 48px controls, 8px between. */
   padding: 8px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--ut-bg) 72%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
-  backdrop-filter: blur(18px) saturate(1.4);
-  box-shadow: inset 0 0 0 1px var(--ut-line), 0 8px 24px -12px rgba(0, 0, 0, 0.35);
+  background: color-mix(in srgb, var(--ut-fg) 9%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  backdrop-filter: blur(28px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ut-fg) 8%, transparent);
 }
 .hdr-home { margin-right: 12px; }
 .hdr-home:hover { background: color-mix(in srgb, var(--ut-fg) 6%, transparent); }
@@ -395,7 +399,6 @@ main .legal-toc a {
 }
 .legal-doc > p { color: var(--ut-mid); }
 .legal-doc .claim {
-  margin-top: 16px;
   color: var(--ut-heading);
   font-size: var(--t-base);
   font-weight: 500;
@@ -480,42 +483,60 @@ code {
 
 /* ---------- the foot of a page ---------- */
 
-/* The footer runs the width of the page's wide sections, not the text
-   column: the brand at one end, the pages at the other, the small print under
-   a rule of its own. */
+/* Laid out after Opal's: the brand beside four columns of links, and a base
+   strip of small print. All of the content is filler for now. */
 .foot {
   --foot-w: min(calc(100vw - 48px), 1240px);
   width: var(--foot-w);
-  margin: 96px calc((100% - var(--foot-w)) / 2) 0;
-  padding-top: 32px;
+  margin: 64px calc((100% - var(--foot-w)) / 2) 0;
+  padding: 32px 0 20px;
   border-top: 1px solid var(--ut-line);
   font-size: var(--t-small);
   line-height: 20px;
   color: var(--ut-dim);
   letter-spacing: var(--ut-read-track);
 }
-.foot-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+.foot a { border-bottom: 0; transition: color var(--ut-quick) var(--ut-ease); }
+.foot-main {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) 3fr;
+  gap: 40px;
+  margin-top: 0;
 }
-.foot a { border-bottom: 0; }
 .foot-brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   color: var(--ut-fg);
-  font-size: var(--t-base);
+  font-size: var(--t-small);
   font-weight: 500;
 }
 .foot-brand .mark { width: 18px; height: 18px; color: var(--ut-fg); }
-.foot-nav { display: flex; align-items: center; gap: 28px; }
-.foot-nav a { color: var(--ut-dim); transition: color var(--ut-quick) var(--ut-ease); }
-.foot-nav a:hover { color: var(--ut-fg); }
-.foot-fine { margin: 32px 0 0; font-size: var(--t-fine); color: var(--ut-dim); }
-@media (max-width: 560px) {
-  .foot-top { flex-direction: column; align-items: flex-start; gap: 20px; }
+.foot-id p { margin: 10px 0 0; max-width: 18em; font-size: var(--t-fine); }
+.foot-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.foot a, .foot-col h3 { font-size: var(--t-fine); }
+.foot .foot-brand, .foot-col h3 { font-size: var(--t-small); }
+.foot-col h3 { margin: 0 0 12px; color: var(--ut-fg); font-size: var(--t-small); font-weight: 500; letter-spacing: 0; }
+.foot-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.foot-col a:hover { color: var(--ut-fg); }
+.foot-base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ut-line);
+  font-size: var(--t-fine);
+}
+.foot-base p { margin: 0; }
+.foot-social { display: flex; align-items: center; gap: 18px; }
+@media (max-width: 900px) {
+  .foot-main { grid-template-columns: 1fr; gap: 40px; }
+  .foot-cols { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
+}
+@media (max-width: 640px) {
+  .foot-base { flex-direction: column; align-items: flex-start; }
 }
 
 @media (max-width: 720px) {
@@ -536,7 +557,7 @@ code {
    Vercel-style: ink on white, hairline borders, one solid button and one
    outlined, no colour beyond the mark. */
 
-.hero { padding: 12svh 0 6svh; text-align: center; }
+.hero { position: relative; z-index: 2; padding: 12svh 0 6svh; text-align: center; }
 .hero h1 {
   text-wrap: balance;
   margin: 0 auto;
@@ -558,21 +579,20 @@ code {
   color: var(--ut-mid);
 }
 
-/* The cue under the hero: a button, and a chevron that bobs to say "down". */
+/* The cue under the hero: a button, and a chevron to say "down". */
 .cue { margin: 32px 0 0; transition: opacity 0.3s var(--ut-ease); }
-.cue[data-away] { opacity: 0; pointer-events: none; }
 .cue-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   height: 52px;
-  padding: 0 22px 0 28px;
+  padding: 0 22px 0 26px;
   border: 0;
   border-radius: 999px;
   background: color-mix(in srgb, var(--ut-fg) 9%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   backdrop-filter: blur(18px) saturate(1.4);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ut-fg) 14%, transparent), 0 10px 30px -14px rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ut-fg) 14%, transparent);
   color: var(--ut-fg);
   font: inherit;
   font-size: var(--t-base);
@@ -584,9 +604,7 @@ code {
 .cue-btn:focus-visible { outline: 2px solid var(--ut-accent); outline-offset: 3px; }
 .cue-btn:hover { background: color-mix(in srgb, var(--ut-fg) 15%, transparent); }
 .cue-btn:active { transform: scale(0.98); }
-.cue-btn svg { width: 18px; height: 18px; animation: cue-bob 1.8s ease-in-out infinite; }
-@keyframes cue-bob { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(2px); } }
-@media (prefers-reduced-motion: reduce) { .cue-btn svg { animation: none; } }
+.cue-btn svg { width: 18px; height: 18px; }
 
 .facts { margin: 16px 0 0; border-top: 1px solid var(--ut-line); }
 .facts > div {
@@ -1255,22 +1273,41 @@ code {
    the peel. Two-tone headlines: the claim in ink, the rest a step down. */
 .story-caps { list-style: none; margin: 64px 0 0; padding: 0; display: grid; gap: 32px; text-align: center; }
 .story-caps h2 {
-  text-wrap: balance;
-  margin: 0 auto;
-  max-width: 20em;
-  font-size: var(--t-title);
-  line-height: 1.12;
+  margin: 0;
+  font-size: var(--t-cap);
+  line-height: 1.2;
   font-weight: 400;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   color: var(--ut-dim);
 }
-.story-caps h2 span { color: var(--ut-heading); font-weight: 500; }
-.story-caps a { color: var(--ut-heading); border-bottom: 0; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+/* One size throughout. The claim is bold and in colour; the words that
+   matter in the rest are bold and in ink. */
+.story-caps h2 span { display: block; color: var(--ut-em); font-weight: 600; }
+@media (min-width: 720px) { .story-caps h2 { white-space: nowrap; } }
+.story-caps h2 strong { color: var(--ut-heading); font-weight: 600; }
+.pol-wrap { margin: 0; text-align: center; transition: opacity 0.4s var(--ut-ease), transform 0.5s var(--ut-spring, cubic-bezier(0.32, 0.72, 0, 1)); }
+.story.is-live .pol-wrap:not(.on) { opacity: 0; transform: translateY(6px); pointer-events: none; }
+.pol {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ut-heading);
+  font-size: var(--t-base);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  border: 0;
+}
+.pol-tile { width: 28px; height: 28px; color: var(--ut-em); }
+.pol .pol-text { text-decoration: underline transparent; text-decoration-thickness: 1.5px; text-underline-offset: 5px; transition: text-decoration-color var(--ut-quick) var(--ut-ease); }
+.pol:hover .pol-text, .pol:focus-visible .pol-text { text-decoration-color: currentColor; }
+.pol:focus-visible { outline: 2px solid var(--ut-accent); outline-offset: 4px; border-radius: 8px; }
 .story .cmp { margin-top: 32px; }
 /* The pinned stretch is real content, not padding: a sticky box only
    travels inside its parent's content box. */
 .story.is-live::after { content: ""; display: block; height: 525svh; }
 .story.is-live .story-pin {
+  isolation: isolate;
   position: sticky;
   top: 108px;
   height: calc(100svh - 108px);
@@ -1279,69 +1316,105 @@ code {
   justify-content: center;
   gap: 28px;
 }
-.story.is-live .story-caps { display: grid; margin: 0; gap: 0; }
-.story.is-live .story-caps li {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transform: translateY(8px);
-  pointer-events: none;
-  transition: opacity 0.4s var(--ut-ease), transform 0.4s var(--ut-ease);
+/* The captions sit in a frosted grey panel that is sized to the caption in
+   view. Every caption is laid over the others, centred; the script measures
+   the visible one and gives the panel its size, and the panel eases to the
+   next with the same spring-like curve Apple's system UI uses. */
+.story.is-live .story-caps {
+  --spring: cubic-bezier(0.32, 0.72, 0, 1);
+  position: relative;
+  display: block;
+  align-self: center;
+  margin: 0;
+  max-width: calc(100vw - 32px);
+  border-radius: 30px;
+  background: color-mix(in srgb, var(--ut-fg) 9%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  backdrop-filter: blur(28px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ut-fg) 8%, transparent);
 }
-.story.is-live .story-caps li.on { opacity: 1; transform: none; pointer-events: auto; }
+.story.is-live .story-caps li {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(720px, calc(100vw - 64px));
+  padding: 22px 36px 24px;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translate(-50%, -50%) scale(0.94);
+  pointer-events: none;
+}
+.story.is-settled .story-caps {
+  transition: width 0.7s var(--spring), height 0.7s var(--spring), opacity 0.4s var(--ut-ease);
+}
+.story.is-settled .story-caps li {
+  transition: opacity 0.35s var(--ut-ease), filter 0.5s var(--spring), transform 0.7s var(--spring);
+}
+/* With scripting, the unpinned prerender is a different layout from the live
+   one, so it is not shown at all: the story appears once, already pinned. */
+.js .story:not(.is-live) { visibility: hidden; min-height: calc(100svh - 108px + 525svh); }
+/* The captions wait until the reader scrolls: at the top the hero speaks. */
+.story.is-live:not([data-away]) .story-caps { opacity: 0; }
+/* Once live it comes up from nothing, rather than popping in at the bottom. */
+@keyframes story-in { from { opacity: 0; } }
+.story.is-live .story-pin, .story-shade { animation: story-in 0.35s var(--ut-ease); }
+.story.is-live .story-caps li.on { opacity: 1; filter: none; transform: translate(-50%, -50%); pointer-events: auto; }
 .story.is-live .cmp { margin: 0; flex: 0 0 auto; }
 /* Wider than the column: the device is the product, so it gets the room,
    and its size is held to what fits beside the caption. */
 .story.is-live .cmp-device {
-  --w: min(calc(100vw - 48px), 1240px, calc((100svh - 108px - 190px) / 0.604));
+  --w: min(calc(100vw - 48px), 1240px, calc((100svh - 108px - 230px) / 0.604));
   width: var(--w);
   /* Wider than its column, so auto margins would pin it to the left. */
   margin-inline: calc((100% - var(--w)) / 2);
 }
 @keyframes fm-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 /* The short version: three numbers, set large and light. */
-.highlights { margin-top: 12svh; text-align: center; }
+.highlights { margin-top: 72px; text-align: center; }
 .highlights h2 {
   margin: 0;
-  font-size: var(--t-title);
-  line-height: 1.05;
-  font-weight: 400;
-  letter-spacing: -0.035em;
+  font-size: var(--t-cap);
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.025em;
   color: var(--ut-heading);
 }
 .hl-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 56px auto 0;
+  gap: 12px;
+  margin: 24px auto 0;
   width: min(calc(100vw - 48px), 1240px);
   position: relative;
   left: 50%;
   transform: translateX(-50%);
 }
 .hl-card {
-  padding: 40px 28px 32px;
-  border-radius: 20px;
+  padding: 20px 22px 22px;
+  border-radius: 16px;
   background: var(--ut-fill);
   box-shadow: inset 0 0 0 1px var(--ut-line);
   text-align: left;
 }
 .hl-card p { margin: 0; }
 .hl-card .hl-n {
-  font-size: var(--t-stat);
-  line-height: 0.9;
+  font-size: 40px;
+  line-height: 1;
   font-weight: 400;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.04em;
   color: var(--ut-heading);
 }
 .hl-card h3 {
-  margin: 24px 0 6px;
-  font-size: var(--t-sub);
-  line-height: 1.15;
+  margin: 12px 0 4px;
+  font-size: var(--t-base);
+  line-height: 1.2;
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--ut-heading);
 }
-.hl-card p:last-child { color: var(--ut-dim); font-weight: 400; font-size: var(--t-base); line-height: 1.45; }
+.hl-card p:last-child { color: var(--ut-dim); font-weight: 400; font-size: var(--t-small); line-height: 1.45; }
 @media (max-width: 860px) { .hl-grid { grid-template-columns: 1fr; } }
 /* The shadow across the bottom of the screen: until the story reaches the
    video, the preview rises out of it rather than sitting there in full colour. */
@@ -1356,8 +1429,12 @@ code {
   background: linear-gradient(to top, var(--ut-bg) 8%, color-mix(in srgb, var(--ut-bg) 80%, transparent) 40%, transparent);
 }
 .fm-fresh { animation: fm-in 0.45s var(--ut-ease) both; }
+@media (max-width: 719px) {
+  .story.is-live .story-caps { border-radius: 26px; }
+  .story.is-live .story-caps li { width: min(calc(100vw - 48px), 400px); padding: 18px 22px 20px; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .story.is-live .story-caps li { transition: none; transform: none; }
+  .story.is-settled .story-caps, .story.is-settled .story-caps li { transition: none; }
   .fm-fresh { animation: none; }
 }
 .fm-switch.off { background: var(--ut-edge-lit); }
@@ -1374,4 +1451,101 @@ code {
   .yt-info { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }
   .yt-ava { width: 28px; height: 28px; }
   .yt-shorts > div > span { max-width: 72px; }
+}
+
+/* ---------- add to chrome ---------- */
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: var(--ut-fg);
+  color: var(--ut-bg);
+  font-size: var(--t-base);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--ut-quick) var(--ut-ease), transform var(--ut-press, 80ms) var(--ut-ease);
+}
+.add-btn { gap: 10px; padding: 0 26px 0 22px; }
+.add-icon { height: 22px; width: auto; flex: 0 0 auto; }
+/* Google's bag is light, so on the light pill of the dark theme it is held to
+   its shape with a hairline of shadow. */
+:root[data-theme="dark"] .add-icon { filter: drop-shadow(0 0 0.6px rgba(0, 0, 0, 0.55)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .add-icon { filter: drop-shadow(0 0 0.6px rgba(0, 0, 0, 0.55)); } }
+.add-btn:hover { background: color-mix(in srgb, var(--ut-fg) 84%, var(--ut-bg)); }
+.add-btn:active { transform: scale(0.98); }
+.add-btn:focus-visible { outline: 2px solid var(--ut-accent); outline-offset: 3px; }
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 0;
+}
+.hero-actions.is-settled { transition: opacity 0.3s var(--ut-ease); }
+.hero-actions[data-away] { opacity: 0; pointer-events: none; }
+.hero-actions .cue { margin: 0; }
+
+/* ---------- liquid glass (caption panel) ----------
+   Modelled on the iOS 27 Siri card: a smoked body that darkens and lightly
+   blurs what is behind it (the background stays legible, just softened), a
+   one-pixel rim that is faint along the top and brightest along the bottom
+   curve, and a soft glow just inside the edge where the glass thickens. The
+   nav pill keeps its plain grey. */
+.story.is-live .story-caps {
+  --glass-tint: rgba(250, 250, 252, 0.42);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-shade: rgba(0, 0, 0, 0.1);
+  --glass-top: rgba(0, 0, 0, 0.22);
+  isolation: isolate;
+  border-radius: 34px;
+  /* Heavier at the top, easing out to the plain tint below. */
+  background: linear-gradient(180deg, var(--glass-top), transparent 85%), var(--glass-tint);
+  -webkit-backdrop-filter: blur(12px) saturate(1.7) brightness(1.02);
+  backdrop-filter: blur(12px) saturate(1.7) brightness(1.02);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-shade),
+    inset 0 -12px 18px -10px rgba(255, 255, 255, 0.55),
+    0 24px 48px -24px rgba(0, 0, 0, 0.4);
+}
+.story.is-live .story-caps::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.25px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.06) 40%, var(--glass-edge));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.story.is-live .story-caps::after { content: none; }
+:root[data-theme="dark"] .story.is-live .story-caps {
+  --glass-tint: rgba(28, 30, 28, 0.5);
+  --glass-edge: rgba(255, 255, 255, 0.55);
+  --glass-shade: rgba(0, 0, 0, 0.35);
+  --glass-top: rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-shade),
+    inset 0 -12px 18px -10px rgba(255, 255, 255, 0.16),
+    0 24px 48px -24px rgba(0, 0, 0, 0.8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .story.is-live .story-caps {
+    --glass-tint: rgba(28, 30, 28, 0.5);
+    --glass-edge: rgba(255, 255, 255, 0.55);
+    --glass-shade: rgba(0, 0, 0, 0.35);
+    --glass-top: rgba(0, 0, 0, 0.4);
+    box-shadow:
+      inset 0 0 0 1px var(--glass-shade),
+      inset 0 -12px 18px -10px rgba(255, 255, 255, 0.16),
+      0 24px 48px -24px rgba(0, 0, 0, 0.8);
+  }
 }

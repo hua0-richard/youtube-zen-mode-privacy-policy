@@ -1,18 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Compare } from "../components/Compare.jsx";
+import { PrivacyIcon } from "../components/Icons.jsx";
+import { AddToChrome } from "../components/AddToChrome.jsx";
 
 /* A pinned stage and a timeline. While the page scrolls through the story the
    preview stays put and the scroll position is its progress: the YouTube layer
    wipes away as a function of it, and the captions hand over at quarter marks.
    Without JavaScript the captions are an ordinary list above the preview. */
 const CHAPTERS = [
-  { lead: "Every page is tuned for the next click.", rest: "Home, search, even the video page." },
-  { lead: "Only what you chose.", rest: "Your subscriptions, newest first, one line each." },
-  { lead: "Yours to shape.", rest: "One channel or all of them. Shorts off." },
-  { lead: "Details, one click away.", rest: "Open any video beside the list, and nothing below it moves." },
-  { lead: "Nothing leaves your browser.", rest: "No account, no server, no tracking.", link: true },
+  { lead: "Every page is tuned for the next click.", rest: "**Home**, **search**, even the **video page**." },
+  { lead: "Only what you chose.", rest: "Your **subscriptions**, **newest first**, one line each." },
+  { lead: "Yours to shape.", rest: "**One channel** or **all of them**. **Shorts off.**" },
+  { lead: "Details, one click away.", rest: "Open any video **beside the list**. Nothing shifts." },
+  { lead: "Nothing leaves your browser.", rest: "**No account**, **no server**, **no tracking**.", link: true },
 ];
+
+/* **double stars** mark the words worth a second look. */
+function emphasise(text) {
+  return text.split("**").map((t, i) => (i % 2 ? <strong key={i}>{t}</strong> : t));
+}
 
 const NARROW = { channel: "Veritasium", shorts: false };
 const STATE = [{}, {}, NARROW, NARROW, NARROW];
@@ -37,13 +44,23 @@ export function LandingPage() {
   const [live, setLive] = useState(false);
   const [p, setP] = useState(0);
   const [away, setAway] = useState(false);
+  /* Fades are for scrolling, not for the first measure after a refresh, when
+     the browser may restore a scroll position and the buttons should simply
+     start hidden. */
+  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
     document.title = "Focus Mode For YouTube";
   }, []);
 
-  /* Progress through the pinned stretch, 0 to 1. */
-  useEffect(() => {
+  /* The caption panel is as big as the caption in view. */
+  const caps = useRef(null);
+  const [box, setBox] = useState(null);
+
+  /* Progress through the pinned stretch, 0 to 1. Measured before the first
+     paint, so no frame is shown in a state the next one corrects. */
+  const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect;
+  useBeforePaint(() => {
     const el = story.current;
     if (!el) return;
     setLive(true);
@@ -61,12 +78,24 @@ export function LandingPage() {
       if (!frame) frame = requestAnimationFrame(measure);
     };
     measure();
+    /* Fades start only after the load event and two frames, by which time
+       the browser has put the scroll position back. */
+    let settle = 0;
+    const arm = () => {
+      settle = requestAnimationFrame(() => {
+        settle = requestAnimationFrame(() => setSettled(true));
+      });
+    };
+    if (document.readyState === "complete") arm();
+    else window.addEventListener("load", arm, { once: true });
     window.addEventListener("scroll", on, { passive: true });
     window.addEventListener("resize", on);
     return () => {
       window.removeEventListener("scroll", on);
       window.removeEventListener("resize", on);
       if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("load", arm);
+      cancelAnimationFrame(settle);
     };
   }, []);
 
@@ -88,6 +117,25 @@ export function LandingPage() {
   const pane = live ? smooth((p - 0.57) / 0.09) : 0;
   const now = STATE[step];
 
+  const useMeasure = typeof window === "undefined" ? useEffect : useLayoutEffect;
+  useMeasure(() => {
+    const ol = caps.current;
+    if (!live || !ol) return;
+    const fit = () => {
+      const li = ol.children[step];
+      if (!li) return;
+      /* Width follows the caption in view; height is the tallest of them, so
+         the panel only ever changes shape sideways. */
+      const w = li.offsetWidth;
+      const h = Math.max(...Array.from(ol.children, (c) => c.offsetHeight));
+      setBox((b) => (b && b.w === w && b.h === h ? b : { w, h }));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    document.fonts?.ready.then(fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [live, step]);
+
   return (
     <>
       <div className="hero">
@@ -96,35 +144,38 @@ export function LandingPage() {
           Focus Mode turns YouTube into a plain list of the channels you
           subscribe to, newest first.
         </p>
-        <p className="cue" data-away={away ? "" : undefined} aria-hidden={away ? "true" : undefined}>
+        <div className={"hero-actions" + (settled ? " is-settled" : "")} data-away={away ? "" : undefined} aria-hidden={away ? "true" : undefined}>
+          <AddToChrome tabIndex={away ? -1 : 0} />
+          <p className="cue">
           <button type="button" className="cue-btn" onClick={learnMore} tabIndex={away ? -1 : 0}>
             Learn more
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
               <path d="M4 6.4 8 10.4l4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-        </p>
+          </p>
+        </div>
       </div>
 
       {live && <div className="story-shade" style={{ opacity: 1 - heat }} aria-hidden="true" />}
 
-      <section ref={story} className={"story" + (live ? " is-live" : "")} aria-label="How Focus Mode works">
+      <section ref={story} className={"story" + (live ? " is-live" : "") + (settled ? " is-settled" : "")} data-away={away ? "" : undefined} aria-label="How Focus Mode works">
         <div className="story-pin">
-          <ol className="story-caps">
+          <ol ref={caps} className="story-caps" style={box ? { width: box.w, height: box.h } : undefined}>
             {CHAPTERS.map((c, i) => (
               <li key={c.lead} className={i === step ? "on" : ""}>
                 <h2>
-                  <span>{c.lead}</span> {c.rest}
-                  {c.link && (
-                    <>
-                      {" "}
-                      <Link to="/privacy">Read the policy</Link>
-                    </>
-                  )}
+                  <span>{c.lead}</span> {emphasise(c.rest)}
                 </h2>
               </li>
             ))}
           </ol>
+          <p className={"pol-wrap" + (step === CHAPTERS.length - 1 ? " on" : "")}>
+            <Link to="/privacy" className="pol" tabIndex={!live || step === CHAPTERS.length - 1 ? 0 : -1}>
+              <span className="pol-text">Read the policy</span>
+              <PrivacyIcon />
+            </Link>
+          </p>
           <Compare reveal={reveal} heat={heat} pane={pane} channel={now.channel} shorts={now.shorts} />
         </div>
       </section>
